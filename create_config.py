@@ -5,9 +5,6 @@ config = {
     # Pixel size (vertically) between each button
     "buttonInterval": 23.6,
     
-    # The number of 'Review' button in current page
-    "nButtons": 23,
-    
     # Pixel position of 'save as' button relative to the right-clicked button
     "rightClick_x": 834,
     "rightClick_y": 172,
@@ -15,11 +12,6 @@ config = {
     # Relative (not absolute!!) pixel position for 'save as'
     "rel_saveAs_x": 51,
     "rel_saveAs_y": 88,
-    
-    # The patient's ID in the top column (where first 'Review' button is located)
-    # This will be used as the file name for the first file.
-    # And then, the number will be incremented for each file.
-    "patientID": 67
 }
 
 # Save the configuration to a config.json file

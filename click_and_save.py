@@ -24,27 +24,31 @@ def load_config():
     with open('config.json', 'r') as config_file:
         return json.load(config_file)
     
-def click_save_per_page(config, firstButtonX, firstButtonY):
+def click_save_per_page(firstID, firstButtonLoc, nClicks, config):
     buttonInterval = config['buttonInterval']
-    nButtons = config['nButtons']
     rightClick_x = config['rightClick_x']
     rightClick_y = config['rightClick_y']
     rel_saveAs_x = config['rel_saveAs_x']
     rel_saveAs_y = config['rel_saveAs_y']
-    patientID = config['patientID']
     
-    for i in range(nButtons):
+    firstButtonX, firstButtonY = firstButtonLoc
+    
+    for i in range(nClicks):
         # 1. Move mouse and click the button
         # Each click can be executed by just passing coordinates directly into the function (e.g. click(xPos, yPos) )
         # but it is safer to see with your own eyes if the mouse is moving towards correct locations
         pyautogui.moveTo(firstButtonX, firstButtonY + buttonInterval*i)
         pyautogui.click()
-        time.sleep(1)
+        time.sleep(0.5)
+        pyautogui.click()
+        
+        # pop-up page takes time to load. At least 3 seconds (Otherwise, it will click on the wrong page)
+        time.sleep(3)
         
         # 2. Right click on blank white space of popped-up page
         pyautogui.moveTo(rightClick_x, rightClick_y)
         pyautogui.rightClick()
-        time.sleep(0.2)
+        time.sleep(0.5)
         
         # 3. Click 'Save As'
         pyautogui.moveRel(rel_saveAs_x, rel_saveAs_y)
@@ -53,7 +57,7 @@ def click_save_per_page(config, firstButtonX, firstButtonY):
         time.sleep(1)
         
         # 4. Change the file name (file name is identical to column ID, which is integer)
-        pyautogui.write(f"{patientID-i}")
+        pyautogui.write(f"{firstID-i}")
         time.sleep(0.5)
         
         # 5. Press enter (same effect as clicking 'save' button)
@@ -62,25 +66,34 @@ def click_save_per_page(config, firstButtonX, firstButtonY):
         # Wait for save operation to complete
         time.sleep(1)
 
-    print(f"Completed {nButtons} save operations.")
+    print(f"Completed {nClicks} save operations.")
     
     
 if __name__ == "__main__":
     config = load_config()
     
-    # Wait for enough time to switch to the target window
-    # time.sleep(5)
-    
-    # Move mouse onto the first 'Review' button
+    # The patient's ID in the top column (where first 'Review' button is located)
+    # This will be used as the file name for the first file.
+    # And then, the number will be decremented for each file.
+    firstID = int(input("Enter the first ID number: "))
+
+    nClicks = int(input("Enter the number of clicks: "))
     
     firstButtonX, firstButtonY = 0, 0
+    start_time = time.time()
     
     while True:
+        # Move mouse onto the first 'Review' button
         if keyboard.is_pressed('space'):
             firstButtonX, firstButtonY = pyautogui.position()
-            keyboard.wait('space', suppress=True)
+            # keyboard.wait('space', suppress=True)
+            time.sleep(0.1) # Small delay to prevent rapid repeated executions
         # Any other hotkeys don't seem to work in Mac
-        elif keyboard.is_pressed('shift'):
-            break    
-    click_save_per_page(config, firstButtonX, firstButtonY)
+        # elif keyboard.is_pressed('shift'):
+        #     break    
+        if time.time() - start_time > 5:
+            break
+    
+    firstButtonLoc = (firstButtonX, firstButtonY)
+    click_save_per_page(firstID, firstButtonLoc, nClicks, config)
     
