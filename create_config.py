@@ -2,12 +2,8 @@ import json
 
 # This is set to MacBook Air M1 12.9 inch screen, Chrome web browser, zoom 50%
 config = {
-    # Pixel position of first button
-    "xPos": 1157,
-    "yPos": 250,
-    
     # Pixel size (vertically) between each button
-    "ySize": 23.6,
+    "buttonInterval": 23.6,
     
     # The number of 'Review' button in current page
     "nButtons": 23,

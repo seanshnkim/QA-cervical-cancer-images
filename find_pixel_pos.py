@@ -1,5 +1,6 @@
 import pyautogui
 import keyboard
+import time
 
 '''
 CAUTIONS:
@@ -11,13 +12,15 @@ def print_mouse_position():
     x, y = pyautogui.position()
     print(f"Mouse position: X: {x}, Y: {y}")
 
-print("Press 'space' to print mouse position. Press 'ctrl+shift+space' to quit.")
+print("Press 'space' to print mouse position. Press 'end' to quit.")
 
 while True:
     if keyboard.is_pressed('space'):
+        # keyboard.wait('space', suppress=True)
         print_mouse_position()
-        keyboard.wait('space')
-    # This doesn't seem to work in Mac
-    elif keyboard.is_pressed('ctrl+shift+esc'):
+        time.sleep(0.1)  # Small delay to prevent rapid repeated executions
+    # Any other hotkeys don't seem to work in Mac
+    elif keyboard.is_pressed('shift'):
+        # keyboard.release('space')
         break
 print("Program ended.")

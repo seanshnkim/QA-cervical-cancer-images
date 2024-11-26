@@ -1,6 +1,8 @@
 import pyautogui
+import keyboard
 import time
 import json
+
 
 '''
 CAUTIONS:
@@ -22,12 +24,8 @@ def load_config():
     with open('config.json', 'r') as config_file:
         return json.load(config_file)
     
-if __name__ == "__main__":
-    config = load_config()
-    
-    xPos = config['xPos']
-    yPos = config['yPos']
-    ySize = config['ySize']
+def click_save_per_page(config, firstButtonX, firstButtonY):
+    buttonInterval = config['buttonInterval']
     nButtons = config['nButtons']
     rightClick_x = config['rightClick_x']
     rightClick_y = config['rightClick_y']
@@ -35,18 +33,15 @@ if __name__ == "__main__":
     rel_saveAs_y = config['rel_saveAs_y']
     patientID = config['patientID']
     
-    # Wait for enough time to switch to the target window
-    time.sleep(5)
-    
     for i in range(nButtons):
         # 1. Move mouse and click the button
-        # It can be achieved by just click(xPos, yPos), 
-        # but it is safer to see with your own eyes if the mouse is on correct spot
-        pyautogui.moveTo(xPos, yPos+ySize*i)
+        # Each click can be executed by just passing coordinates directly into the function (e.g. click(xPos, yPos) )
+        # but it is safer to see with your own eyes if the mouse is moving towards correct locations
+        pyautogui.moveTo(firstButtonX, firstButtonY + buttonInterval*i)
         pyautogui.click()
         time.sleep(1)
         
-        # 2. Right click
+        # 2. Right click on blank white space of popped-up page
         pyautogui.moveTo(rightClick_x, rightClick_y)
         pyautogui.rightClick()
         time.sleep(0.2)
@@ -57,14 +52,35 @@ if __name__ == "__main__":
         # Wait for 'Save As' dialog to appear
         time.sleep(1)
         
-        # 4. Change file name
+        # 4. Change the file name (file name is identical to column ID, which is integer)
         pyautogui.write(f"{patientID-i}")
         time.sleep(0.5)
         
-        # 7. Click 'Save'
+        # 5. Press enter (same effect as clicking 'save' button)
         pyautogui.press('enter')
         
         # Wait for save operation to complete
         time.sleep(1)
 
     print(f"Completed {nButtons} save operations.")
+    
+    
+if __name__ == "__main__":
+    config = load_config()
+    
+    # Wait for enough time to switch to the target window
+    # time.sleep(5)
+    
+    # Move mouse onto the first 'Review' button
+    
+    firstButtonX, firstButtonY = 0, 0
+    
+    while True:
+        if keyboard.is_pressed('space'):
+            firstButtonX, firstButtonY = pyautogui.position()
+            keyboard.wait('space', suppress=True)
+        # Any other hotkeys don't seem to work in Mac
+        elif keyboard.is_pressed('shift'):
+            break    
+    click_save_per_page(config, firstButtonX, firstButtonY)
+    
