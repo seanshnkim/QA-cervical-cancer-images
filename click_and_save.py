@@ -75,7 +75,7 @@ if __name__ == "__main__":
     # The patient's ID in the top column (where first 'Review' button is located)
     # This will be used as the file name for the first file.
     # And then, the number will be decremented for each file.
-    firstID = int(input("Enter the first ID number: "))
+    firstID = int(input("Enter the first ID number.\nIt should be the largest number in the page: "))
 
     nClicks = int(input("Enter the number of clicks: "))
     
